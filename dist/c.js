@@ -71,21 +71,30 @@ module.exports = function deserialize(x) {
   function rInt16() {
     rNUInt8(2);
     var h = hb[0];
-    return h == -32768 ? NaN : h == -32767 ? -Infinity : h == 32767 ? Infinity : h;
+    if (h === -32768) return null;
+    if (h === -32767) return -Infinity;
+    if (h === 32767) return Infinity;
+    return h;
   }
 
   function rInt32() {
     rNUInt8(4);
     var i = ib[0];
-    return i == -2147483648 ? NaN : i == -2147483647 ? -Infinity : i == 2147483647 ? Infinity : i;
+    if (i === -2147483648) return null;
+    if (i === -2147483647) return -Infinity;
+    if (i === 2147483647) return Infinity;
+    return i;
   }
 
   function rInt64() {
     rNUInt8(8);
-    var x = ib[1],
-      y = ib[0];
+    var x=ib[1],y=ib[0];
+    if (x === -2147483648 && y === 0) return null;
+    if (x === -2147483648 && y === 1) return -Infinity;
+    if (x === 2147483647 && y === -1) return Infinity;
     return x * j2p32 + (y >= 0 ? y : j2p32 + y);
   } // closest number to 64 bit int...
+
   function rFloat32() {
     rNUInt8(4);
     return eb[0];
@@ -144,7 +153,9 @@ module.exports = function deserialize(x) {
   }
 
   function r() {
-    var fns = [r, rBool, rGuid, null, rUInt8, rInt16, rInt32, rInt64, rFloat32, rFloat64, rChar, rSymbol, rTimestamp, rMonth, rDate, rDateTime, rTimespan, rMinute, rSecond, rTime];
+    var fns = [r, rBool, rGuid, null, rUInt8, rInt16, rInt32, 
+        rInt64, rFloat32, rFloat64, rChar, rSymbol, rTimestamp, 
+        rMonth, rDate, rDateTime, rTimespan, rMinute, rSecond, rTime];
     var i = 0,
       n, t = rInt8(), x, y, o, j, A;
     if (t < 0 && t > -20) return fns[-t]();

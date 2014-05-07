@@ -77,6 +77,28 @@ describe("Former bugs", function() {
     var longNull = c.ipcstr2ab(str);
     expect(c.deserialize(longNull)).to.equal(null);
   });
+
+  it("Handles int null (0Ni)", function() {
+    var str = "";
+    str += "01000000"; // preamble
+    str += "0c000000"; // msg length (13)
+    str += "fa"; // type, (-6, 32-bit Int)
+    str += "00000080"; // Integer.MIN_VALUE
+    expect(str.length).to.equal(26);
+    var intNull = c.ipcstr2ab(str);
+    expect(c.deserialize(intNull)).to.equal(null);
+  });
+
+  it("Handles short null (0Ns)", function() {
+    var str = "";
+    str += "01000000"; // preamble
+    str += "0c000000"; // msg length (11)
+    str += "fb"; // type, (-5, 16-bit Short)
+    str += "0080"; // Integer.MIN_VALUE
+    expect(str.length).to.equal(22);
+    var shortNull = c.ipcstr2ab(str);
+    expect(c.deserialize(shortNull)).to.equal(null);
+  });
 });
 
 
