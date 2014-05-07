@@ -20,6 +20,15 @@ describe("Datatype Tests", function() {
   it("Properly Converts Floats", function() {
     data = 1234.125;
   });
+  it("Properly Converts null", function() {
+    data = null;
+  });
+  it("Properly Converts the Empty String", function() {
+    data = '';
+  });
+  it("Properly Converts 0", function() {
+    data = 0;
+  });
   it("Properly Converts Dates", function() {
     data = new Date("Tue Apr 22 2014 12:34:56 GMT+0800 (HKT)");
   });
@@ -44,4 +53,9 @@ describe("Datatype Tests", function() {
       }
     };
   });
+});
+
+// Undefined -> null as there is no undefined type in kdb, sanely
+it("Properly Converts undefined to null", function() {
+  expect(c.deserialize(c.serialize(undefined))).to.eql(null);
 });
