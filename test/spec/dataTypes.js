@@ -6,7 +6,7 @@ var c = require('../../index');
 describe("Datatype Tests", function() {
   var data;
   afterEach(function() {
-    expect(c.deserialize(c.serialize(data))).to.eql(data);
+    expect(conv(data)).to.eql(data);
   });
   it("Properly Converts Strings", function() {
     data = "test string 123";
@@ -55,7 +55,31 @@ describe("Datatype Tests", function() {
   });
 });
 
-// Undefined -> null as there is no undefined type in kdb, sanely
-it("Properly Converts undefined to null", function() {
-  expect(c.deserialize(c.serialize(undefined))).to.eql(null);
+describe("Edge-case datatype tests", function() {
+  it("Handles -0", function() {
+    expect(conv(-0)).to.equal(0);
+  });
 });
+
+describe("Former bugs", function() {
+  // Undefined -> null as there is no undefined type in kdb, sanely
+  it("Properly Converts undefined to null", function() {
+    expect(conv(undefined)).to.eql(null);
+  });
+
+  it("Handles long null (0Nj)", function() {
+    var str = "";
+    str += "01000000"; // preamble
+    str += "11000000"; // msg length (17)
+    str += "f9"; // type, (-7, 64-bit Long)
+    str += "0000000000000080"; // Long.MIN_VALUE
+    expect(str.length).to.equal(34);
+    var longNull = c.ipcstr2ab(str);
+    expect(c.deserialize(longNull)).to.equal(null);
+  });
+});
+
+
+function conv(val) {
+  return c.deserialize(c.serialize(val));
+}
