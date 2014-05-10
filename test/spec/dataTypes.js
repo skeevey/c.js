@@ -95,12 +95,12 @@ describe("Former bugs", function() {
     expect(c.deserialize(intNull)).to.eql(NaN);
   });
 
-  it("Handles short null (0Ns)", function() {
+  it("Handles short null (0Nh)", function() {
     var str = "";
     str += "01000000"; // preamble
     str += "0c000000"; // msg length (11)
     str += "fb"; // type, (-5, 16-bit Short)
-    str += "0080"; // Integer.MIN_VALUE
+    str += "0080"; // Short.MIN_VALUE
     expect(str.length).to.equal(22);
     var shortNull = c.ipcstr2ab(str);
     expect(c.deserialize(shortNull)).to.eql(NaN);

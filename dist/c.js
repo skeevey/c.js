@@ -296,6 +296,10 @@ function calcDataSize(value, dataType) {
         return size;
       }
     case 'string':
+    case 'symbol':
+      // Assuming at this point we are not holding the leading '`', so we add 1 for the null termination
+      return 1 + value.length;
+    case 'string':
       // Symbols are encoded with null terminator, but we strip the leading '`', so we add 0
       // Strings are encoded with attributes byte + size (char[])
       var isSymbol = value[0] === '`';
@@ -303,9 +307,6 @@ function calcDataSize(value, dataType) {
     case 'date':
       // Stored as 64-bit days float
       return 8; 
-    case 'symbol':
-      // Assuming at this point we are not holding the leading '`', so we add 1 for the null termination
-      return 1 + value.length;
   }
   throw "bad type " + type;
 }
@@ -358,6 +359,7 @@ function writeData(target, value, dataType) {
         writeBytesToBuffer(target, 8);
       }
       break;
+    case 'string':
     case 'symbol':
       {
         // Symbol type is 0xf5
