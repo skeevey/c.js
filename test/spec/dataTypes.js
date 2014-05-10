@@ -75,7 +75,7 @@ describe("Former bugs", function() {
     str += "0000000000000080"; // Long.MIN_VALUE
     expect(str.length).to.equal(34);
     var longNull = c.ipcstr2ab(str);
-    expect(c.deserialize(longNull)).to.equal(null);
+    expect(c.deserialize(longNull)).to.eql(NaN);
   });
 
   it("Handles int null (0Ni)", function() {
@@ -86,7 +86,7 @@ describe("Former bugs", function() {
     str += "00000080"; // Integer.MIN_VALUE
     expect(str.length).to.equal(26);
     var intNull = c.ipcstr2ab(str);
-    expect(c.deserialize(intNull)).to.equal(null);
+    expect(c.deserialize(intNull)).to.eql(NaN);
   });
 
   it("Handles short null (0Ns)", function() {
@@ -97,7 +97,7 @@ describe("Former bugs", function() {
     str += "0080"; // Integer.MIN_VALUE
     expect(str.length).to.equal(22);
     var shortNull = c.ipcstr2ab(str);
-    expect(c.deserialize(shortNull)).to.equal(null);
+    expect(c.deserialize(shortNull)).to.eql(NaN);
   });
 });
 
