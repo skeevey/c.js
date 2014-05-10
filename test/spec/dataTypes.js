@@ -36,7 +36,7 @@ describe("Datatype Tests", function() {
     data = [1, 2, "foo", "bar", new Date("Tue Apr 22 2014 12:34:56 GMT+0800 (HKT)")];
   });
   it("Properly Converts Complex Objects", function() {
-    data = {
+    data = [{
       options: {
         globals: ['should'],
         timeout: 3000,
@@ -51,7 +51,13 @@ describe("Datatype Tests", function() {
           }
         }
       }
-    };
+    }, {
+      nested: {
+        prettyNested: {
+          wow: ['such', 'doge']
+        }
+      }
+    }];
   });
 });
 
