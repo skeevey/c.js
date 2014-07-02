@@ -25,7 +25,7 @@ module.exports = {
 'use strict';
 // Deserialize impl
 module.exports = function deserialize(x) {
-  var a = x[0],
+  var a = x[0], // endianness - so far, no support for big-endian
     pos = 8,
     j2p32 = Math.pow(2, 32),
     ub = new Uint8Array(x),
@@ -214,6 +214,7 @@ module.exports = function deserialize(x) {
 };
 
 },{}],3:[function(_dereq_,module,exports){
+(function (process,Buffer){
 'use strict';
 
 /**
@@ -225,10 +226,10 @@ module.exports = function deserialize(x) {
  */
 module.exports = function serialize(value) {
   var size = calcDataSize(value, null);
-  // Create an ArrayBuffer for the outgoing data.
+
+  // Create an Typed Array for the outgoing data.
   // Message is always 4 bytes (preamble) + 4 bytes (size) + 1 byte (type) + data.
-  var outBuffer = new ArrayBuffer(9 + size);
-  var outArray = new Uint8Array(outBuffer);
+  var outArray = new Uint8Array(9 + size);
 
   // Set writing position to 0
   outArray._writePosition = 0;
@@ -243,7 +244,11 @@ module.exports = function serialize(value) {
   // Write value to arraybuffer
   writeData(outArray, value, null);
 
-  return outBuffer;
+  if (process.browser) {
+    return outArray.buffer; //return ArrayBuffer in browser
+  } else {
+    return new Buffer(outArray); // Create a Node Buffer from the array
+  }
 };
 
 // Create a few views around 64 bits so we can easily slice & dice
@@ -425,6 +430,69 @@ function writeData(target, value, dataType) {
       break;
   }
 }
+
+}).call(this,_dereq_("/Users/samuelreed/git/BitMEX/c.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),_dereq_("buffer").Buffer)
+},{"/Users/samuelreed/git/BitMEX/c.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":4}],4:[function(_dereq_,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.once = noop;
+process.off = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
 
 },{}]},{},[1])
 (1)
