@@ -14,7 +14,8 @@ module.exports = function(grunt) {
         bundleOptions: {
           debug: false,
           standalone: 'c' // Export to window.c
-        }
+        },
+        exclude: ['buffer'] // will use ArrayBuffer in browsers
       },
       dist: {
         src: ['index.js'],

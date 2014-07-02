@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/BitMEX/c.js",
   "dependencies": {
+    "through": "^2.3.4"
   },
   "devDependencies": {
     "grunt": "^0.4.4",
