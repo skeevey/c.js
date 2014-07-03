@@ -1,6 +1,6 @@
 {
   "name": "c.js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Converts data from kdb+'s internal IPC format to/from JS objects and primitives.",
   "main": "index.js",
   "directories": {
