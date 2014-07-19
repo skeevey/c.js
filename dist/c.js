@@ -121,11 +121,15 @@ module.exports = function deserialize(x) {
     var y = rInt32();
     var m = y % 12;
     y = 2000 + y / 12;
-    return new Date(Date.UTC(y, m, 1));
+    var d = new Date(Date.UTC(y, m, 1));
+    if (d.toString() === "Invalid Date") return null;
+    return d;
   }
 
   function date(n) {
-    return new Date(86400000 * (10957 + n));
+    var d = new Date(86400000 * (10957 + n));
+    if (d.toString() === "Invalid Date") return null;
+    return d;
   }
 
   function rDate() {
