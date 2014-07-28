@@ -437,6 +437,10 @@ function writeData(target, value, dataType) {
         }
       }
       break;
+    default: 
+      {
+        throw new Error("Unknown data type:" + dataType);
+      }
   }
 }
 
