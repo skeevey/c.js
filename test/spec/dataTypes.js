@@ -8,6 +8,12 @@ describe("Datatype Tests", function() {
   afterEach(function() {
     expect(conv(data)).to.eql(data);
   });
+  it("Properly Converts True", function() {
+    data = true;
+  });
+  it("Properly Converts False", function() {
+    data = false;
+  });
   it("Properly Converts Strings", function() {
     data = "test string 123";
   });
