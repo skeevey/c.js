@@ -113,6 +113,8 @@ module.exports = function deserialize(x) {
     return s;
   }
 
+  // Note similarity to date(), but avoids unnecessary massive division by
+  // 86400000000000 which was causing rounding errors.
   function rTimestamp() {
     var d = new Date((86400000 * 10957) + (rInt64() / 1000000));
     if (d.toString() === "Invalid Date") return null;
@@ -159,8 +161,8 @@ module.exports = function deserialize(x) {
   }
 
   function r() {
-    var fns = [r, rBool, rGuid, null, rUInt8, rInt16, rInt32, 
-        rInt64, rFloat32, rFloat64, rChar, rSymbol, rTimestamp, 
+    var fns = [r, rBool, rGuid, null, rUInt8, rInt16, rInt32,
+        rInt64, rFloat32, rFloat64, rChar, rSymbol, rTimestamp,
         rMonth, rDate, rDateTime, rTimespan, rMinute, rSecond, rTime];
     var i = 0,
       n, t = rInt8(), x, y, o, j, A;

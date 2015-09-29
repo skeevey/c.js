@@ -111,6 +111,17 @@ describe("Former bugs", function() {
     var shortNull = c.ipcstr2ab(str);
     expect(c.deserialize(shortNull)).to.eql(NaN);
   });
+
+  it("Doesn't round timestamps", function() {
+    var str = "";
+    str += "01000000"; // preamble
+    str += "11000000"; // msg length (17)
+    str += "f4"; // type, (-12, 64-bit Timestamp)
+    str += "0018f4545e27e506"; //  "2015-09-29T12:57:00.000Z"
+    expect(str.length).to.equal(34);
+    var timestamp = c.ipcstr2ab(str);
+    expect(c.deserialize(timestamp).toISOString()).to.eql("2015-09-29T12:57:00.000Z");
+  });
 });
 
 
