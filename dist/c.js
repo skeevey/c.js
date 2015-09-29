@@ -114,7 +114,9 @@ module.exports = function deserialize(x) {
   }
 
   function rTimestamp() {
-    return date(rInt64() / 86400000000000);
+    var d = new Date((86400000 * 10957) + (rInt64() / 1000000));
+    if (d.toString() === "Invalid Date") return null;
+    return d;
   }
 
   function rMonth() {
@@ -141,7 +143,7 @@ module.exports = function deserialize(x) {
   }
 
   function rTimespan() {
-    return date(rInt64() / 86400000000000);
+    return rTimestamp();
   }
 
   function rSecond() {
