@@ -46,6 +46,7 @@
     "eslint": "^1.10.3",
     "mocha": "^2.3.4",
     "precommit-hook": "^3.0.0",
+    "semver": "^5.1.0",
     "uglify-js": "^2.6.1",
     "webpack": "^1.12.9"
   }
