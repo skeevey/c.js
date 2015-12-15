@@ -1,4 +1,5 @@
 'use strict';
+require('babel-register');
 var expect = require('chai').expect;
 var c = require('../../index');
 var stream = require('../../lib/stream');
