@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "grunt test",
-    "build": "grunt release"
+    "build": "grunt release",
+    "benchmark": "node ./benchmark/deserialize; node ./benchmark/serialize"
   },
   "repository": {
     "type": "git",
