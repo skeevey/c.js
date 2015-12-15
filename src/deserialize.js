@@ -179,7 +179,7 @@ const fns = [r, rBool, rGuid, function(){}, rUInt8, rInt16, rInt32,
     rInt64, rFloat32, rFloat64, rChar, rSymbol, rTimestamp,
     rMonth, rDate, rDateTime, rTimespan, rMinute, rSecond, rTime];
 
-function r(state: State): Array {
+function r(state: State): any {
   let i = 0,
     n, t = rInt8(state), x, y, o, j, len, A;
   if (t < 0 && t > -20){
