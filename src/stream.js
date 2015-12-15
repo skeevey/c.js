@@ -1,8 +1,8 @@
 'use strict';
 
-var deserialize = require('./deserialize');
-var serialize = require('./serialize');
-var through = require('through2');
+let deserialize = require('./deserialize');
+let serialize = require('./serialize');
+let through = require('through2');
 
 module.exports = {
   // Pipe your outgoing data into this stream and it will be serialized on the way to kdb.
@@ -15,11 +15,11 @@ module.exports = {
     });
   },
   getDeserializeStream: function() {
-    var t = through.obj(function write(chunk, enc, callback) {
+    let t = through.obj(function write(chunk, enc, callback) {
       // It's possible the data coming through here is split into pieces; we need to buffer
       // until we know we have the whole message.
       this._buffer = Buffer.concat([this._buffer, chunk]);
-      var expectedLength = getLengthFromBuffer(this._buffer);
+      let expectedLength = getLengthFromBuffer(this._buffer);
       // console.log("Expected length: ", expectedLength, "length:", this._buffer.length);
       if (expectedLength === this._buffer.length) {
         this.push(deserialize(this._buffer));
