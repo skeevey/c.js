@@ -81,7 +81,7 @@ describe("Former bugs", function() {
 
   it("Handles long null (0Nj)", function() {
     var str = "";
-    str += "01000000"; // preamble
+    str += "01000000"; // --preamble--
     str += "11000000"; // msg length (17)
     str += "f9"; // type, (-7, 64-bit Long)
     str += "0000000000000080"; // Long.MIN_VALUE
@@ -92,7 +92,7 @@ describe("Former bugs", function() {
 
   it("Handles int null (0Ni)", function() {
     var str = "";
-    str += "01000000"; // preamble
+    str += "01000000"; // --preamble--
     str += "0c000000"; // msg length (13)
     str += "fa"; // type, (-6, 32-bit Int)
     str += "00000080"; // Integer.MIN_VALUE
@@ -103,7 +103,7 @@ describe("Former bugs", function() {
 
   it("Handles short null (0Nh)", function() {
     var str = "";
-    str += "01000000"; // preamble
+    str += "01000000"; // --preamble--
     str += "0c000000"; // msg length (11)
     str += "fb"; // type, (-5, 16-bit Short)
     str += "0080"; // Short.MIN_VALUE
@@ -114,7 +114,7 @@ describe("Former bugs", function() {
 
   it("Doesn't round timestamps", function() {
     var str = "";
-    str += "01000000"; // preamble
+    str += "01000000"; // --preamble--
     str += "11000000"; // msg length (17)
     str += "f4"; // type, (-12, 64-bit Timestamp)
     str += "0018f4545e27e506"; //  "2015-09-29T12:57:00.000Z"
@@ -125,25 +125,25 @@ describe("Former bugs", function() {
 
   it("Handles flips (-> Array<object>)", function() {
     var str = "";
-    str += '01000000'; // preamble
+    str += '01000000'; // --preamble--
     str += '2f000000'; // msg length (47)
     str += '62'      ; // type 98 (flip/table)
-    str += '00'      ; // attributes
+    str += '00'      ; // --attributes--
     str += '63'      ; // type 99 (dict)
     str += '0b'      ; // type 11 (symbol vector)
-    str += '00'      ; // attributes
+    str += '00'      ; // --attributes--
     str += '02000000'; // vector len (2)
     str += '6100'    ; // null terminated symbol (`a)
     str += '6200'    ; // null terminated symbol (`b)
     str += '00'      ; // type 0 (list)
-    str += '00'      ; // attributes
+    str += '00'      ; // --attributes--
     str += '02000000'; // list len (2)
     str += '06'      ; // type 6 (int vector)
-    str += '00'      ; // attributes
+    str += '00'      ; // --attributes--
     str += '01000000'; // vector len (1)
     str += '02000000'; // 1st element, which is 2
     str += '06'      ; // type 6 (int vector)
-    str += '00'      ; // attributes
+    str += '00'      ; // --attributes--
     str += '01000000'; // vector len (1)
     str += '03000000'; // 1st element, which is 3
     expect(str.length).to.equal(94);
@@ -163,11 +163,7 @@ describe("New behavior", function() {
     //           0000666f // some chars
     //           6f'
     // Good: (symbol)
-    //          '01000000
-    //           0d000000
-    //           f5666f6f
-    //           00'
-    expected += "01000000"; // preamble
+    expected += "01000000"; // --preamble--
     expected += "0d000000"; // msg length (13)
     expected += "f5"; // type, (-11, symbol)
     expected += "666f6f00"; // 'foo\0'
