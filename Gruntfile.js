@@ -1,6 +1,5 @@
 'use strict';
 
-var path = require('path');
 var matchdep = require('matchdep');
 
 module.exports = function(grunt) {
@@ -11,11 +10,12 @@ module.exports = function(grunt) {
     },
     browserify: {
       options: {
-        bundleOptions: {
+        browserifyOptions: {
           debug: false,
           standalone: 'c' // Export to window.c
         },
-        ignore: ['buffer'] // will use ArrayBuffer in browsers
+        ignore: ['buffer'], // will use ArrayBuffer in browsers
+        transform: ['babelify']
       },
       dist: {
         src: ['index.js'],
@@ -39,11 +39,10 @@ module.exports = function(grunt) {
         src: 'test/spec/*.js'
       }
     },
-    jshint: {
-      validate: {
+    eslint: {
+      target: {
         src: ['lib/**/*.js']
-      },
-      options: grunt.file.readJSON('.jshintrc')
+      }
     },
   });
 
@@ -54,5 +53,5 @@ module.exports = function(grunt) {
   });
   grunt.registerTask('test', ['browserify', 'simplemocha']);
   grunt.registerTask('release', ['clean:dist', 'browserify', 'uglify']);
-  grunt.registerTask('default', ['jshint', 'test', 'release']);
+  grunt.registerTask('default', ['eslint', 'test', 'release']);
 };
