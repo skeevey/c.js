@@ -424,7 +424,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	// Types (http://code.kx.com/wiki/Reference/type)
 	var CHAR_ARRAY_TYPE = 10;
-	var FLIP_TYPE = 99;
+	var FLIP_TYPE = 98; // Flip/Table
 	var DICT_TYPE = 99;
 	var LAMBDA_TYPE = 100;
 	var UNARY_PRIM_TYPE = 101;
