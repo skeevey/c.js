@@ -2,10 +2,9 @@
 
 // Create a few views around 64 bits so we can easily slice & dice
 // different data types and insert them byte by byte into the output array.
-
 var byteArray = new Int8Array(8),
-    intArray = new Int32Array(byteArray.buffer),
-    floatArray = new Float64Array(byteArray.buffer);
+  intArray = new Int32Array(byteArray.buffer),
+  floatArray = new Float64Array(byteArray.buffer);
 
 /**
  * Serialize an value into KDB+'s internal IPC format.
@@ -37,8 +36,8 @@ module.exports = function serialize(value) {
   if (process.browser) {
     return outArray.buffer; //return ArrayBuffer in browser
   } else {
-      return new Buffer(outArray); // Create a Node Buffer from the array
-    }
+    return new Buffer(outArray); // Create a Node Buffer from the array
+  }
 };
 
 function toType(obj) {
@@ -60,9 +59,7 @@ function getVals(obj) {
 // Calculate the total needed ArrayBuffer size.
 function calcDataSize(value, dataType) {
   var type = dataType ? dataType : toType(value);
-  var size,
-      i,
-      TYPE_SIZE = 1;
+  var size, i, TYPE_SIZE = 1;
   switch (type) {
     case 'undefined':
     case 'null':
@@ -146,7 +143,7 @@ function writeData(target, value, dataType) {
         // Date type is 0xf1
         writeByte(target, -15);
         // Written as a float representing days; IEEE754 is precise enough to store this without any loss
-        floatArray[0] = value.getTime() / 86400000 - 10957;
+        floatArray[0] = (value.getTime() / 86400000) - 10957;
         writeBytesToBuffer(target, 8);
       }
       break;

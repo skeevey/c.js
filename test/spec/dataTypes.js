@@ -1,6 +1,6 @@
 'use strict';
 var expect = require('chai').expect;
-var c = require('../../dist/c');
+var c = require('../../index');
 
 /*global describe:true, it:true, afterEach:true */
 describe("Datatype Tests", function() {
