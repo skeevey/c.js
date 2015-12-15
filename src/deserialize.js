@@ -16,7 +16,7 @@ const UNIX_KDB_EPOCH_DIFF = 10957;
 
 // Types (http://code.kx.com/wiki/Reference/type)
 const CHAR_ARRAY_TYPE = 10;
-const FLIP_TYPE = 99;
+const FLIP_TYPE = 98; // Flip/Table
 const DICT_TYPE = 99;
 const LAMBDA_TYPE = 100;
 const UNARY_PRIM_TYPE = 101;

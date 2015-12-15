@@ -122,6 +122,34 @@ describe("Former bugs", function() {
     var timestamp = c.ipcstr2ab(str);
     expect(c.deserialize(timestamp).toISOString()).to.eql("2015-09-29T12:57:00.000Z");
   });
+
+  it("Handles flips (-> Array<object>)", function() {
+    var str = "";
+    str += '01000000'; // preamble
+    str += '2f000000'; // msg length (47)
+    str += '62'      ; // type 98 (flip/table)
+    str += '00'      ; // attributes
+    str += '63'      ; // type 99 (dict)
+    str += '0b'      ; // type 11 (symbol vector)
+    str += '00'      ; // attributes
+    str += '02000000'; // vector len (2)
+    str += '6100'    ; // null terminated symbol (`a)
+    str += '6200'    ; // null terminated symbol (`b)
+    str += '00'      ; // type 0 (list)
+    str += '00'      ; // attributes
+    str += '02000000'; // list len (2)
+    str += '06'      ; // type 6 (int vector)
+    str += '00'      ; // attributes
+    str += '01000000'; // vector len (1)
+    str += '02000000'; // 1st element, which is 2
+    str += '06'      ; // type 6 (int vector)
+    str += '00'      ; // attributes
+    str += '01000000'; // vector len (1)
+    str += '03000000'; // 1st element, which is 3
+    expect(str.length).to.equal(94);
+    var flip = c.ipcstr2ab(str);
+    expect(c.deserialize(flip)).to.eql([{a: 2, b: 3}]);
+  });
 });
 
 describe("New behavior", function() {
