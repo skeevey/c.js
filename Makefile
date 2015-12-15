@@ -19,7 +19,7 @@ MIN = $(DIST)/c.min.js
 .PHONY: test dev build clean
 
 clean:
-	rm $(DISTOUT) $(MIN) $(LIB)
+	rm $(DIST)/* $(LIB) || true
 
 build: $(LIB) $(DISTOUT) $(MIN)
 
@@ -38,10 +38,10 @@ $(MIN): $(DISTOUT) $(BIN)
 	  --in-source-map $<.map \
 	  --compress warnings=false
 
-$(DISTOUT): $(BIN)
+$(DISTOUT): $(LIB) $(BIN)
 	@$(WEBPACK) --devtool source-map
 
-test: $(LIB) $(DISTOUT) $(BIN)
+test: $(LIB) $(BIN)
 	@$(MOCHA) test/spec/*.js
 
 coverage: build $(BIN)
@@ -52,32 +52,31 @@ coverage: build $(BIN)
 clean-coverage:
 	rm -rf coverage
 
-
 node_modules/.bin: install
 
 define release
 	VERSION=`node -pe "require('./package.json').version"` && \
 	NEXT_VERSION=`node -pe "require('semver').inc(\"$$VERSION\", '$(1)')"` && \
 	node -e "\
-		['./package.json', './bower.json'].forEach(function(fileName) {\
+		['./package.json'].forEach(function(fileName) {\
 			var j = require(fileName);\
 			j.version = \"$$NEXT_VERSION\";\
 			var s = JSON.stringify(j, null, 2);\
 			require('fs').writeFileSync(fileName, s);\
 		});" && \
 	git add package.json CHANGELOG.md && \
-	git add -f dist/ && \
+	git add -f dist/ lib/ && \
 	git commit -m "release v$$NEXT_VERSION" && \
 	git tag "v$$NEXT_VERSION" -m "release v$$NEXT_VERSION"
 endef
 
-release-patch: test clean build
+release-patch: clean build test
 	@$(call release,patch)
 
-release-minor: test clean build
+release-minor: clean build test
 	@$(call release,minor)
 
-release-major: test clean build
+release-major: clean build test
 	@$(call release,major)
 
 # publish: clean build
