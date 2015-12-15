@@ -1,6 +1,9 @@
 {
   "ignore": "node_modules/**/*.js, interfaces/, **/*.js.flow",
   "plugins": [
-    "transform-flow-strip-types"
+    "transform-flow-strip-types",
+    "transform-es2015-destructuring",
+    "transform-es2015-parameters",
+    "transform-es2015-block-scoping"
   ]
 }
