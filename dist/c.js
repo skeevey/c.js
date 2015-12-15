@@ -187,7 +187,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // Symbol type is 0xf5
 	    writeByte(target, -11);
 	    for (var i = 0, len = value.length; i < len; i++) {
-	      writeByte(target, value[i].charCodeAt());
+	      writeByte(target, value.charCodeAt(i));
 	    } // Symbols are null-terminated
 	    writeByte(target, 0);
 	  },
@@ -250,7 +250,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (var i = 0, valLen = value.length; i < valLen; i++) {
 	      var symbol = value[i];
 	      for (var j = 0, symLen = symbol.length; j < symLen; j++) {
-	        writeByte(target, symbol[j].charCodeAt());
+	        writeByte(target, symbol.charCodeAt(j));
 	      } // Symbols are null-terminated
 	      writeByte(target, 0);
 	    }
