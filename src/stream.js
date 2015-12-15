@@ -6,7 +6,7 @@ var through = require('through2');
 
 module.exports = {
   // Pipe your outgoing data into this stream and it will be serialized on the way to kdb.
-  getSerializeStream: function () {
+  getSerializeStream: function() {
     // Serializes an incoming value.
     // FIXME do we need objectMode here?
     return through.obj(function write(chunk, end, callback) {
@@ -14,7 +14,7 @@ module.exports = {
       callback();
     });
   },
-  getDeserializeStream: function () {
+  getDeserializeStream: function() {
     var t = through.obj(function write(chunk, enc, callback) {
       // It's possible the data coming through here is split into pieces; we need to buffer
       // until we know we have the whole message.
