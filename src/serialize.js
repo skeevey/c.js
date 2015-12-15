@@ -77,7 +77,7 @@ const writers = {
   'symbol': function(value, target) {
     // Symbol type is 0xf5
     writeByte(target, -11);
-    for (let i = 0, len = value.length; i < len; i++) writeByte(target, value[i].charCodeAt());
+    for (let i = 0, len = value.length; i < len; i++) writeByte(target, value.charCodeAt(i));
     // Symbols are null-terminated
     writeByte(target, 0);
   },
@@ -130,7 +130,7 @@ const writers = {
     // Write each key as a symbol
     for (let i = 0, valLen = value.length; i < valLen; i++) {
       let symbol = value[i];
-      for (let j = 0, symLen = symbol.length; j < symLen; j++) writeByte(target, symbol[j].charCodeAt());
+      for (let j = 0, symLen = symbol.length; j < symLen; j++) writeByte(target, symbol.charCodeAt(j));
       // Symbols are null-terminated
       writeByte(target, 0);
     }
