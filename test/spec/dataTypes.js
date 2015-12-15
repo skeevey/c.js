@@ -124,6 +124,29 @@ describe("Former bugs", function() {
   });
 });
 
+describe("New behavior", function() {
+  it("Serializes strings into symbols", function() {
+    var shouldBeSymbol = c.serialize("foo");
+    var expected = "";
+    // Bad: (char[])
+    //          '01000000
+    //           11000000 // len 17
+    //           0a000300 // char[]
+    //           0000666f // some chars
+    //           6f'
+    // Good: (symbol)
+    //          '01000000
+    //           0d000000
+    //           f5666f6f
+    //           00'
+    expected += "01000000"; // preamble
+    expected += "0d000000"; // msg length (13)
+    expected += "f5"; // type, (-11, symbol)
+    expected += "666f6f00"; // 'foo\0'
+    expect(c.ab2ipcstr(shouldBeSymbol)).to.eql(expected);
+  });
+});
+
 
 function conv(val) {
   return c.deserialize(c.serialize(val));
