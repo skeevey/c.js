@@ -22,6 +22,6 @@ module.exports = {
     extensions: ['', '.webpack.js', '.web.js', '.js', '.es6']
   },
   plugins: [
-    new webpack.IgnorePlugin(/buffer/)
+    new webpack.NormalModuleReplacementPlugin(/buffer/, '../noop')
   ]
 };
