@@ -58,7 +58,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	module.exports = {
 	  serialize: __webpack_require__(1),
-	  deserialize: __webpack_require__(3),
+	  deserialize: __webpack_require__(4),
 	  ab2ipcstr: function (buffer) {
 	    var str = "";
 	    var bufferView = new Uint8Array(buffer);
@@ -151,7 +151,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  writeBytesToBuffer(outArray, 4);
 	
 	  if (process.browser) {
-	    return new Uint8Array.from(outArray); //return ArrayBuffer in browser
+	    return new Uint8Array(outArray); //return ArrayBuffer in browser
 	  } else {
 	      return new Buffer(outArray); // Create a Node Buffer from the array
 	    }
@@ -302,7 +302,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (!writers[type]) throw new Error("Unknown data type:" + dataType);
 	  return writers[type](value, target);
 	}
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"/Users/samuelreed/git/BitMEX/c.js/node_modules/webpack/node_modules/node-libs-browser/node_modules/buffer/index.js\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(3).Buffer))
 
 /***/ },
 /* 2 */
@@ -403,6 +403,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	module.exports = function () {};
+
+/***/ },
+/* 4 */
 /***/ function(module, exports) {
 
 	

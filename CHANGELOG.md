@@ -1,3 +1,26 @@
+## 0.1.5 (Dec 16, 2015)
+
+* Fix browser compatibility and missing `UInt8Array.from` method.
+  A simple constructor call (`new UInt8Array(arr)`) works fine.
+* Added `noop.js` to stub Buffer in the browser, since Webpack will try to load the Buffer
+  module even if it is removed with `webpack.IgnorePlugin`.
+
+## 0.1.4 (Dec 15, 2015)
+
+* Fix compatibility with Flow projects.
+
+## 0.1.3 (Dec 15, 2015)
+
+* Fix mis-specified FLIP_TYPE and add test.
+
+## 0.1.2 (Dec 15, 2015)
+
+* Fix a stream dependency misconfiguration.
+
+## 0.1.1 (Dec 15, 2015)
+
+* 3x speedup in V8 by preventing deopt on String#charCodeAt().
+
 ## 0.1.0 (Dec 15, 2015)
 
 * Refactor `deserialize.js` to avoid repeatedly declaring functions.
