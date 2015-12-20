@@ -1,4 +1,7 @@
 'use strict';
+
+// Note the stream modules are not exported directly as they are not useful in the browser build.
+// If you need them, require('c.js/lib/stream').
 module.exports = {
   serialize: require('./lib/serialize'),
   deserialize: require('./lib/deserialize'),

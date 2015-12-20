@@ -19,7 +19,7 @@
 
 ## 0.1.1 (Dec 15, 2015)
 
-* 3x speedup in V8 by preventing deopt on String#charCodeAt().
+* 3x serialization speedup in V8 by preventing deopt on String#charCodeAt().
 
 ## 0.1.0 (Dec 15, 2015)
 

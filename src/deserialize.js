@@ -56,7 +56,7 @@ function rBool(state: State): boolean {
   return rInt8(state) == 1;
 }
 
-function rChar(state) {
+function rChar(state): string {
   return String.fromCharCode(rInt8(state));
 }
 
@@ -182,7 +182,9 @@ const fns = [r, rBool, rGuid, function(){}, rUInt8, rInt16, rInt32,
 function r(state: State): any {
   let i = 0,
     n, t = rInt8(state), x, y, o, j, len, A;
+
   if (t < 0 && t > -20){
+    // Primitive types, as above.
     return fns[-t](state);
   } else if (t > DICT_TYPE) {
     // This shouldn't ever get sent down the pipe to a JS client/server,
@@ -202,6 +204,8 @@ function r(state: State): any {
     return "func";
   } else if (t === DICT_TYPE) {
     let isFlip = (state.ub[state.pos] == FLIP_TYPE);
+    // Dicts are represented as two lists, one of keys, one of values.
+    // We deserialize each of these lists then construct a JS object.
     x = r(state);
     y = r(state);
     if (!isFlip) {
@@ -233,13 +237,17 @@ function r(state: State): any {
     }
     return A;
   }
+
+  // Arrays
   n = rInt32(state);
+  // Character array
   if (t === CHAR_ARRAY_TYPE) {
     let s = "";
     n += state.pos;
-    for (; state.pos < n; s += rChar(state));
+    while(state.pos < n) s += rChar(state);
     return s;
   }
+  // Other type of array
   A = new Array(n);
   let f = fns[t];
   for (i = 0; i < n; i++) A[i] = f(state);
