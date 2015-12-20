@@ -1,8 +1,8 @@
 'use strict';
 
 const bench = require('./_bench');
-const deserialize = require('../src/deserialize');
-const serialize = require('../src/serialize');
+const deserialize = require('../lib/deserialize');
+const serialize = require('../lib/serialize');
 
 console.log('KDB Deserialize benchmark.');
 

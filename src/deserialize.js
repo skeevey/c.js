@@ -36,6 +36,7 @@ type State = {
   fb: Float64Array
 };
 
+// This can also take a Buffer or TypedArray, but Flow chokes on it
 module.exports = function deserialize(x: Array<number>): Object {
   let bb = new Uint8Array(8);
   let state: State = {
@@ -122,8 +123,7 @@ function rFloat64(state: State): number {
 
 function rSymbol(state: State): string {
   let c, s = "";
-  for (;
-    (c = rInt8(state)) !== 0; s += String.fromCharCode(c));
+  while ((c = rInt8(state)) !== 0) s += String.fromCharCode(c);
   return s;
 }
 
@@ -189,7 +189,7 @@ function r(state: State): any {
   } else if (t > DICT_TYPE) {
     // This shouldn't ever get sent down the pipe to a JS client/server,
     // rather only between KDB instances.
-    if (t == LAMBDA_TYPE) {
+    if (t === LAMBDA_TYPE) {
       rSymbol(state);
       return r(state);
     }

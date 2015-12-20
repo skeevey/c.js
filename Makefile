@@ -44,6 +44,14 @@ $(DISTOUT): $(LIB) $(BIN)
 test: $(LIB) $(BIN)
 	@$(MOCHA) test/spec/*.js
 
+benchmark: $(LIB) $(BIN)
+	node ./benchmark/deserialize
+	node ./benchmark/serialize
+
+benchmark-deopt: $(LIB) $(BIN)
+	node --trace-deopt ./benchmark/deserialize
+	node --trace-deopt ./benchmark/serialize
+
 coverage: build $(BIN)
 	$(ISTANBUL) $(_MOCHA) -- $(TEST); \
 	status=$$?; \

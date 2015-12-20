@@ -10,7 +10,8 @@
     "test": "make test",
     "build": "make build",
     "lint": "eslint src/ test/",
-    "benchmark": "babel-node ./benchmark/deserialize; babel-node ./benchmark/serialize"
+    "benchmark": "make benchmark",
+    "benchmark-deopt": "make benchmark-deopt"
   },
   "repository": {
     "type": "git",

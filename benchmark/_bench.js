@@ -1,18 +1,16 @@
-// @flow
 'use strict';
 /*eslint no-console: 0*/
 
-type Case = {iterations: number, name: string, fn: Function};
-module.exports = function createBench(cases: Array<Case>) {
+module.exports = function createBench(cases) {
   let data;
-  cases.forEach(function({iterations, name, fn}:Case) {
+  cases.forEach(function(aCase) {
     times(5, () => {
-      let hot = () => fn(data);
-      let labelName = `${name} (${iterations} iterations)`;
+      let hot = () => aCase.fn(data);
+      let labelName = `${aCase.name} (${aCase.iterations} iterations)`;
 
       // Run bench
       console.time(labelName);
-      times(iterations, hot);
+      times(aCase.iterations, hot);
       console.timeEnd(labelName);
     });
   });
