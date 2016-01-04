@@ -28,27 +28,21 @@ type State = {
   a: number,
   pos: number,
   ub: Uint8Array,
-  sb: Int8Array,
-  bb: Uint8Array,
-  hb: Int16Array,
-  ib: Int32Array,
-  eb: Float32Array,
-  fb: Float64Array
+  sb: Int8Array
 };
+let bb = new Uint8Array(8);
+let hb = new Int16Array(bb.buffer);
+let ib = new Int32Array(bb.buffer);
+let eb = new Float32Array(bb.buffer);
+let fb = new Float64Array(bb.buffer);
 
 // This can also take a Buffer or TypedArray, but Flow chokes on it
 module.exports = function deserialize(x: Array<number>): Object {
-  let bb = new Uint8Array(8);
   let state: State = {
     a: x[0], // endianness - so far, no support for big-endian
     pos: 8,
     ub: new Uint8Array(x),
-    sb: new Int8Array(x),
-    bb: bb,
-    hb: new Int16Array(bb.buffer),
-    ib: new Int32Array(bb.buffer),
-    eb: new Float32Array(bb.buffer),
-    fb: new Float64Array(bb.buffer)
+    sb: new Int8Array(x)
   };
   return r(state);
 };
@@ -66,7 +60,7 @@ function rInt8(state: State): number {
 }
 
 function rNUInt8(n: number, state: State): void {
-  for (let i = 0; i < n; i++) state.bb[i] = state.ub[state.pos++];
+  for (let i = 0; i < n; i++) bb[i] = state.ub[state.pos++];
 }
 
 function rUInt8(state: State): number {
@@ -86,7 +80,7 @@ function rGuid(state: State): string {
 
 function rInt16(state: State): number {
   rNUInt8(2, state);
-  let h = state.hb[0];
+  let h = hb[0];
   if (h === INT16_MIN) return NaN;
   if (h === INT16_MIN + 1) return -Infinity;
   if (h === INT16_MAX) return Infinity;
@@ -95,7 +89,7 @@ function rInt16(state: State): number {
 
 function rInt32(state: State): number {
   rNUInt8(4, state);
-  let i = state.ib[0];
+  let i = ib[0];
   if (i === INT32_MIN) return NaN;
   if (i === INT32_MIN + 1) return -Infinity;
   if (i === INT32_MAX) return Infinity;
@@ -104,7 +98,7 @@ function rInt32(state: State): number {
 
 function rInt64(state: State): number {
   rNUInt8(8, state);
-  let x=state.ib[1],y=state.ib[0];
+  let x=ib[1],y=ib[0];
   if (x === INT32_MIN && y === 0) return NaN;
   if (x === INT32_MIN && y === 1) return -Infinity;
   if (x === INT32_MAX && y === -1) return Infinity;
@@ -113,12 +107,12 @@ function rInt64(state: State): number {
 
 function rFloat32(state: State): number {
   rNUInt8(4, state);
-  return state.eb[0];
+  return eb[0];
 }
 
 function rFloat64(state: State): number {
   rNUInt8(8, state);
-  return state.fb[0];
+  return fb[0];
 }
 
 function rSymbol(state: State): string {
