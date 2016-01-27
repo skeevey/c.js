@@ -116,7 +116,7 @@ const writers = {
     intArray[0] = value.length;
     writeBytesToBuffer(target, 4);
     // Write bytes
-    for (let i = 0; i < value.length; i++) writeData(target, value[i], null);
+    for (let i = 0, len = value.length; i < len; i++) writeData(target, value[i], null);
   },
   // Used for object keys
   'symbols': function(value, target) {
@@ -171,7 +171,7 @@ function writeByte(target, b) {
 
 // Write an array of values to the buffer.
 function writeBytesToBuffer(target, bytes) {
-  for (let i = 0; i < bytes; i++) target[target._writePosition++] = byteArray[i];
+  for (let i = 0; i < bytes; i++) writeByte(target, byteArray[i]);
 }
 
 // Write the value we're serializing directly to the buffer.

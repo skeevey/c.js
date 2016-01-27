@@ -174,66 +174,81 @@ const fns = [r, rBool, rGuid, function(){}, rUInt8, rInt16, rInt32,
     rMonth, rDate, rDateTime, rTimespan, rMinute, rSecond, rTime];
 
 function r(state: State): any {
-  let i = 0,
-    n, t = rInt8(state), x, y, o, j, len, A;
+  let t = rInt8(state);
 
   if (t < 0 && t > -20){
     // Primitive types, as above.
     return fns[-t](state);
   } else if (t > DICT_TYPE) {
-    // This shouldn't ever get sent down the pipe to a JS client/server,
-    // rather only between KDB instances.
-    if (t === LAMBDA_TYPE) {
-      rSymbol(state);
-      return r(state);
-    }
-    // This is Unary or Binary prims, or a Ternary expression
-    else if (t < PROJECTION_TYPE) return rInt8(state) === 0 && t == UNARY_PRIM_TYPE ? null : "func";
-    // This is f', f/, f\, f', f/:, f\:, and dynamic load
-    else if (t > COMPOSITION_TYPE) r(state);
-    else {
-      // Projection or composition
-      for (n = rInt32(state); i < n; i++) r(state);
-    }
-    return "func";
+    return over_dict_type(state, t);
   } else if (t === DICT_TYPE) {
-    let isFlip = (state.ub[state.pos] == FLIP_TYPE);
-    // Dicts are represented as two lists, one of keys, one of values.
-    // We deserialize each of these lists then construct a JS object.
-    x = r(state);
-    y = r(state);
-    if (!isFlip) {
-      // Dict
-      o = {};
-      for (i = 0, len = x.length; i < len; i++) {
-        o[x[i]] = y[i];
-      }
-    } else {
-      // Flip (http://code.kx.com/wiki/Reference/flip)
-      o = [x, y];
-    }
-    return o;
+    return dict_type(state);
   }
   state.pos++;
   if (t === FLIP_TYPE) {
-    //    return r(); // better as array of dicts?
-    rInt8(state); // check type is 99 here
-    // read the arrays and then flip them into an array of dicts
-    x = r(state);
-    y = r(state);
-    A = new Array(y[0].length);
-    for (j = 0, len = A.length; j < len; j++) {
-      o = {};
-      for (i = 0; i < x.length; i++) {
-        o[x[i]] = y[i][j];
-      }
-      A[j] = o;
-    }
-    return A;
+    return flip_type(state);
   }
 
   // Arrays
-  n = rInt32(state);
+  return array_type(state, t);
+}
+
+function over_dict_type(state, t) {
+  // This shouldn't ever get sent down the pipe to a JS client/server,
+  // rather only between KDB instances.
+  if (t === LAMBDA_TYPE) {
+    rSymbol(state);
+    return r(state);
+  }
+  // This is Unary or Binary prims, or a Ternary expression
+  else if (t < PROJECTION_TYPE) return rInt8(state) === 0 && t == UNARY_PRIM_TYPE ? null : "func";
+  // This is f', f/, f\, f', f/:, f\:, and dynamic load
+  else if (t > COMPOSITION_TYPE) r(state);
+  else {
+    // Projection or composition
+    for (var n = rInt32(state), i = 0; i < n; i++) r(state);
+  }
+  return "func";
+}
+
+function dict_type(state) {
+  let isFlip = (state.ub[state.pos] == FLIP_TYPE);
+  // Dicts are represented as two lists, one of keys, one of values.
+  // We deserialize each of these lists then construct a JS object.
+  var x = r(state);
+  var y = r(state);
+  if (!isFlip) {
+    // Dict
+    var o = {};
+    for (var i = 0, len = x.length; i < len; i++) {
+      o[x[i]] = y[i];
+    }
+  } else {
+    // Flip (http://code.kx.com/wiki/Reference/flip)
+    o = [x, y];
+  }
+  return o;
+}
+
+function flip_type(state) {
+  //    return r(); // better as array of dicts?
+  rInt8(state); // check type is 99 here
+  // read the arrays and then flip them into an array of dicts
+  var x = r(state);
+  var y = r(state);
+  var A = new Array(y[0].length);
+  for (var j = 0, len = A.length; j < len; j++) {
+    var o = {};
+    for (var i = 0; i < x.length; i++) {
+      o[x[i]] = y[i][j];
+    }
+    A[j] = o;
+  }
+  return A;
+}
+
+function array_type(state, t) {
+  var n = rInt32(state);
   // Character array
   if (t === CHAR_ARRAY_TYPE) {
     let s = "";
@@ -242,8 +257,8 @@ function r(state: State): any {
     return s;
   }
   // Other type of array
-  A = new Array(n);
+  var A = new Array(n);
   let f = fns[t];
-  for (i = 0; i < n; i++) A[i] = f(state);
+  for (var i = 0; i < n; i++) A[i] = f(state);
   return A;
 }
