@@ -38,11 +38,12 @@ let fb = new Float64Array(bb.buffer);
 
 // This can also take a Buffer or TypedArray, but Flow chokes on it
 module.exports = function deserialize(x: Array<number>): Object {
+  const ub = new Uint8Array(x);
   let state: State = {
     a: x[0], // endianness - so far, no support for big-endian
     pos: 8,
-    ub: new Uint8Array(x),
-    sb: new Int8Array(x)
+    ub: ub,
+    sb: new Int8Array(ub.buffer)
   };
   return r(state);
 };
