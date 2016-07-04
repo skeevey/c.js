@@ -52,6 +52,21 @@ benchmark-deopt: $(LIB) $(BIN)
 	node --trace-deopt ./benchmark/deserialize
 	node --trace-deopt ./benchmark/serialize
 
+benchmark-deopt-verbose: $(LIB) $(BIN)
+	node --trace-deopt --print-opt-code --code-comments ./benchmark/deserialize
+	node --trace-deopt --print-opt-code --code-comments ./benchmark/serialize
+
+generate-irhydra: $(LIB) $(BIN)
+	node --trace-hydrogen \
+		--trace-phase=Z \
+		--trace-deopt \
+		--code-comments \
+		--hydrogen-track-positions \
+		--redirect-code-traces \
+		--redirect-code-traces-to=code.asm \
+		--print-opt-code \
+		./benchmark/deserialize
+
 coverage: build $(BIN)
 	$(ISTANBUL) $(_MOCHA) -- $(TEST); \
 	status=$$?; \
