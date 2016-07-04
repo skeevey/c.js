@@ -26,6 +26,9 @@ describe("Datatype Tests", function() {
   it("Properly Converts Floats", function() {
     data = 1234.125;
   });
+  it("Properly Converts Floats that may show error", function() {
+    data = 668.9299999999999;
+  });
   it("Properly Converts null", function() {
     data = null;
   });
@@ -50,7 +53,7 @@ describe("Datatype Tests", function() {
         grep: '*-test',
         ui: 'bdd',
         reporter: 'tap',
-        date: new Date(),
+        date: new Date("2014-01-01"),
         nested: {
           prettyNested: {
             wow: ['such', 'doge']
