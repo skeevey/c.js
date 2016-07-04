@@ -3,9 +3,9 @@
 // Create a few views around 64 bits so we can easily slice & dice
 // different data types and insert them byte by byte into the output array.
 
-let byteArray = new Int8Array(8);
-let intArray = new Int32Array(byteArray.buffer);
-let floatArray = new Float64Array(byteArray.buffer);
+const byteArray = new Int8Array(8);
+const intArray = new Int32Array(byteArray.buffer);
+const floatArray = new Float64Array(byteArray.buffer);
 
 /**
  * Serialize an value into KDB+'s internal IPC format.
@@ -21,7 +21,7 @@ module.exports = function serialize(value) {
   // Note we're just using a regular array and letting the runtime resize it as we use it.
   // This turns out to be faster than traversing through the data once to determine the size, then again
   // to fill it.
-  let outArray = [];
+  const outArray = [];
 
   // Set writing position to 0
   outArray._writePosition = 0;
@@ -102,7 +102,7 @@ const writers = {
     // Dict type is 0x63
     writeByte(target, 99);
     // Write keys as symbols
-    let [keys, vals] = getKeysAndVals(value);
+    const [keys, vals] = getKeysAndVals(value);
     writeData(target, keys, 'symbols');
     // Write values according to their types
     writeData(target, vals, null);
@@ -116,7 +116,7 @@ const writers = {
     intArray[0] = value.length;
     writeBytesToBuffer(target, 4);
     // Write bytes
-    for (let i = 0, len = value.length; i < len; i++) writeData(target, value[i], null);
+    for (let i = 0, len = value.length; i < len; i++) writeData(target, value[i], undefined /* auto type */);
   },
   // Used for object keys
   'symbols': function(value, target) {
@@ -129,7 +129,7 @@ const writers = {
     writeBytesToBuffer(target, 4);
     // Write each key as a symbol
     for (let i = 0, valLen = value.length; i < valLen; i++) {
-      let symbol = value[i];
+      const symbol = value[i];
       for (let j = 0, symLen = symbol.length; j < symLen; j++) writeByte(target, symbol.charCodeAt(j));
       // Symbols are null-terminated
       writeByte(target, 0);
@@ -146,7 +146,7 @@ writers.string = writers.symbol;
 //
 
 function toType(obj) {
-  let jsType = typeof obj;
+  const jsType = typeof obj;
   if (jsType !== 'object' && jsType !== 'function') return jsType;
   if (!obj) return 'null';
   if (Array.isArray(obj)) return 'array';
@@ -155,9 +155,9 @@ function toType(obj) {
 }
 
 function getKeysAndVals(obj) {
-  let keys = Object.keys(obj);
-  let len = keys.length;
-  let values = Array(len);
+  const keys = Object.keys(obj);
+  const len = keys.length;
+  const values = Array(len);
   for (let i = 0; i < len; i++) {
     values[i] = obj[keys[i]];
   }
@@ -176,7 +176,7 @@ function writeBytesToBuffer(target, bytes) {
 
 // Write the value we're serializing directly to the buffer.
 function writeData(target, value, dataType) {
-  let type = dataType || toType(value);
+  const type = dataType || toType(value);
   if (!writers[type]) throw new Error("Unknown data type:" + dataType);
   return writers[type](value, target);
 }

@@ -30,16 +30,16 @@ type State = {
   ub: Uint8Array,
   sb: Int8Array
 };
-let bb = new Uint8Array(8);
-let hb = new Int16Array(bb.buffer);
-let ib = new Int32Array(bb.buffer);
-let eb = new Float32Array(bb.buffer);
-let fb = new Float64Array(bb.buffer);
+const bb = new Uint8Array(8);
+const hb = new Int16Array(bb.buffer);
+const ib = new Int32Array(bb.buffer);
+const eb = new Float32Array(bb.buffer);
+const fb = new Float64Array(bb.buffer);
 
 // This can also take a Buffer or TypedArray, but Flow chokes on it
 module.exports = function deserialize(x: Array<number>): Object {
   const ub = new Uint8Array(x);
-  let state: State = {
+  const state: State = {
     a: x[0], // endianness - so far, no support for big-endian
     pos: 8,
     ub: ub,
@@ -71,7 +71,7 @@ function rUInt8(state: State): number {
 function rGuid(state: State): string {
   let s = "";
   for (let i = 0; i < 16; i++) {
-    let c = rUInt8(state);
+    const c = rUInt8(state);
     s += i == 4 || i == 6 || i == 8 || i == 10 ? "-" : "";
     s += GUID_CHARS[c >> 4];
     s += GUID_CHARS[c & 15];
@@ -81,7 +81,7 @@ function rGuid(state: State): string {
 
 function rInt16(state: State): number {
   rNUInt8(2, state);
-  let h = hb[0];
+  const h = hb[0];
   if (h === INT16_MIN) return NaN;
   if (h === INT16_MIN + 1) return -Infinity;
   if (h === INT16_MAX) return Infinity;
@@ -90,7 +90,7 @@ function rInt16(state: State): number {
 
 function rInt32(state: State): number {
   rNUInt8(4, state);
-  let i = ib[0];
+  const i = ib[0];
   if (i === INT32_MIN) return NaN;
   if (i === INT32_MIN + 1) return -Infinity;
   if (i === INT32_MAX) return Infinity;
@@ -99,7 +99,7 @@ function rInt32(state: State): number {
 
 function rInt64(state: State): number {
   rNUInt8(8, state);
-  let x=ib[1],y=ib[0];
+  const [y, x] = ib;
   if (x === INT32_MIN && y === 0) return NaN;
   if (x === INT32_MIN && y === 1) return -Infinity;
   if (x === INT32_MAX && y === -1) return Infinity;
@@ -125,22 +125,22 @@ function rSymbol(state: State): string {
 // Note similarity to date(), but avoids unnecessary massive division by
 // 86400000000000 which was causing rounding errors.
 function rTimestamp(state: State): ?Date {
-  let d = new Date((MS_IN_DAY * UNIX_KDB_EPOCH_DIFF) + (rInt64(state) / 1000000));
+  const d = new Date((MS_IN_DAY * UNIX_KDB_EPOCH_DIFF) + (rInt64(state) / 1000000));
   if (d.toString() === "Invalid Date") return null;
   return d;
 }
 
 function rMonth(state: State): ?Date {
   let y = rInt32(state);
-  let m = y % 12;
+  const m = y % 12;
   y = 2000 + y / 12;
-  let d = new Date(Date.UTC(y, m, 1));
+  const d = new Date(Date.UTC(y, m, 1));
   if (d.toString() === "Invalid Date") return null;
   return d;
 }
 
 function date(n: number): ?Date {
-  let d = new Date(MS_IN_DAY * (UNIX_KDB_EPOCH_DIFF + n));
+  const d = new Date(MS_IN_DAY * (UNIX_KDB_EPOCH_DIFF + n));
   if (d.toString() === "Invalid Date") return null;
   return d;
 }
@@ -175,7 +175,7 @@ const fns = [r, rBool, rGuid, function(){}, rUInt8, rInt16, rInt32,
     rMonth, rDate, rDateTime, rTimespan, rMinute, rSecond, rTime];
 
 function r(state: State): any {
-  let t = rInt8(state);
+  const t = rInt8(state);
 
   if (t < 0 && t > -20){
     // Primitive types, as above.
@@ -213,15 +213,16 @@ function over_dict_type(state, t) {
 }
 
 function dict_type(state) {
-  let isFlip = (state.ub[state.pos] == FLIP_TYPE);
+  const isFlip = (state.ub[state.pos] == FLIP_TYPE);
   // Dicts are represented as two lists, one of keys, one of values.
   // We deserialize each of these lists then construct a JS object.
-  var x = r(state);
-  var y = r(state);
+  const x = r(state);
+  const y = r(state);
+  let o;
   if (!isFlip) {
     // Dict
-    var o = {};
-    for (var i = 0, len = x.length; i < len; i++) {
+    o = {};
+    for (let i = 0, len = x.length; i < len; i++) {
       o[x[i]] = y[i];
     }
   } else {
@@ -235,12 +236,12 @@ function flip_type(state) {
   //    return r(); // better as array of dicts?
   rInt8(state); // check type is 99 here
   // read the arrays and then flip them into an array of dicts
-  var x = r(state);
-  var y = r(state);
-  var A = new Array(y[0].length);
-  for (var j = 0, len = A.length; j < len; j++) {
-    var o = {};
-    for (var i = 0; i < x.length; i++) {
+  const x = r(state);
+  const y = r(state);
+  const A = new Array(y[0].length);
+  for (let j = 0, len = A.length; j < len; j++) {
+    const o = {};
+    for (let i = 0; i < x.length; i++) {
       o[x[i]] = y[i][j];
     }
     A[j] = o;
@@ -249,7 +250,7 @@ function flip_type(state) {
 }
 
 function array_type(state, t) {
-  var n = rInt32(state);
+  let n = rInt32(state);
   // Character array
   if (t === CHAR_ARRAY_TYPE) {
     let s = "";
@@ -258,8 +259,8 @@ function array_type(state, t) {
     return s;
   }
   // Other type of array
-  var A = new Array(n);
-  let f = fns[t];
-  for (var i = 0; i < n; i++) A[i] = f(state);
+  const A = new Array(n);
+  const f = fns[t];
+  for (let i = 0; i < n; i++) A[i] = f(state);
   return A;
 }
